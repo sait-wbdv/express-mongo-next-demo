@@ -20,7 +20,9 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre("save", function (next) {
-  this.slug = slugify(this.name, { lower: true });
+  if (!this.user) {
+    this.slug = slugify(this.name, { lower: true });
+  }
   next();
 });
 const User = mongoose.model("User", userSchema);
@@ -34,7 +36,6 @@ async function generateSlugsForUsers() {
       await user.save();
       console.log(`Generated slug for user: ${user.name} -> ${user.slug}`);
     }
-    console.log("Slug generation complete");
   } catch (error) {
     console.error("Error generating slugs", error);
   }

@@ -1,13 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const slugify = require("slugify");
 const connectDB = require("./config/connectDB");
 const PORT = process.env.PORT || 3000;
 const Comment = require("./model/Comment");
 const { User, generateSlugsForUsers } = require("./model/User");
 const app = express();
 
-// generateSlugsForUsers();
+generateSlugsForUsers();
+
 app.get("/", async (req, res) => {
   try {
     const result = await mongoose.connection.db.listCollections().toArray();
