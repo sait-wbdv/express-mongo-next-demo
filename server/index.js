@@ -1,10 +1,13 @@
-const path = require("node:path");
 const express = require("express");
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 const connectDB = require("./config/connectDB");
 const PORT = process.env.PORT || 3000;
 const Comment = require("./model/Comment");
+const { User, generateSlugsForUsers } = require("./model/User");
 const app = express();
+
+generateSlugsForUsers();
 
 app.get("/comments", async (req, res) => {
   const result = await Comment.find().limit(25);
@@ -23,6 +26,16 @@ app.get("/comments/:id", async (req, res) => {
   }
 });
 
+app.get("/users", async (req, res) => {
+  const result = await User.find().limit(25);
+  res.json({ users: result });
+});
+
+app.get("/users/user/:slug", async (req, res) => {
+  const result = await User.findOne();
+
+  res.json({ users: result });
+});
 // connect to db
 connectDB();
 mongoose.connection.once("open", () => {
