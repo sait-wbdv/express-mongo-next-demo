@@ -7,8 +7,23 @@ const Comment = require("./model/Comment");
 const { User, generateSlugsForUsers } = require("./model/User");
 const app = express();
 
-generateSlugsForUsers();
-
+// generateSlugsForUsers();
+app.get("/", async (req, res) => {
+  try {
+    const result = await mongoose.connection.db.listCollections().toArray();
+    // filter approach
+    const collections = result.filter(
+      (collection) =>
+        collection.name === "users" || collection.name === "comments"
+    );
+    // everything approach
+    // const collections = result.map((collection) => collection.name);
+    res.json(collections);
+  } catch (error) {
+    console.error("Error fetching collections: ", error);
+    res.status(500).json({ message: "Error Fetching collections" });
+  }
+});
 app.get("/comments", async (req, res) => {
   const result = await Comment.find().limit(25);
   res.send({ comments: result });
@@ -32,7 +47,7 @@ app.get("/users", async (req, res) => {
 });
 
 app.get("/users/user/:slug", async (req, res) => {
-  const result = await User.findOne();
+  const result = await User.findOne({ slug: req.params.slug });
 
   res.json({ users: result });
 });
