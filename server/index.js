@@ -6,8 +6,6 @@ const Comment = require("./model/Comment");
 const { User, generateSlugsForUsers } = require("./model/User");
 const app = express();
 
-generateSlugsForUsers();
-
 app.get("/", async (req, res) => {
   try {
     const result = await mongoose.connection.db.listCollections().toArray();
@@ -16,7 +14,6 @@ app.get("/", async (req, res) => {
       (collection) =>
         collection.name === "users" || collection.name === "comments"
     );
-    // everything approach
     // const collections = result.map((collection) => collection.name);
     res.json(collections);
   } catch (error) {
@@ -54,6 +51,8 @@ app.get("/users/user/:slug", async (req, res) => {
 // connect to db
 connectDB();
 mongoose.connection.once("open", () => {
+  // generate slugs after your connected
+  generateSlugsForUsers();
   console.log("Connected to MongoDB");
   app.listen(PORT, () => {
     console.log(`Listening on https://${PORT}`);
